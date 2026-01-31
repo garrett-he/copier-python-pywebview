@@ -19,11 +19,21 @@ jobs:
 
       - uses: astral-sh/setup-uv@v5
 
-      - name: Install dependencies
-        run: just install-dev
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
 
-      - name: Run checkers
-        run: just check
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: just install
+
+      - name: Run linter
+        run: just lint
 
   test:
     runs-on: ubuntu-latest
@@ -32,17 +42,32 @@ jobs:
       matrix:
         python-version: {% for i in python_version | version_list(['3.12', '3.13', '3.14']) %}
           - "{{ i }}"{% endfor %}
+
+    env:
+        QT_QPA_PLATFORM: offscreen
     steps:
-      - uses: actions/checkout@v4
+        - name: Install system dependencies
+          run: sudo apt-get update && sudo apt-get install -y libegl1 libgl1
 
-      - uses: extractions/setup-just@v4
+        - uses: actions/checkout@v4
 
-      - uses: astral-sh/setup-uv@v5
-        with:
-          python-version: {% raw %}${{ matrix.python-version }}{% endraw %}
+        - uses: extractions/setup-just@v4
 
-      - name: Install dependencies
-        run: just install-dev
+        - uses: astral-sh/setup-uv@v5
+          with:
+            python-version: {% raw %}${{ matrix.python-version }}{% endraw %}
 
-      - name: Run tests
-        run: just test
+        - uses: pnpm/action-setup@v4
+          with:
+            version: 9
+        - uses: actions/setup-node@v4
+          with:
+            node-version: 22
+            cache: pnpm
+            cache-dependency-path: frontend/pnpm-lock.yaml
+
+        - name: Install dependencies
+          run: just install
+
+        - name: Run tests
+          run: just test

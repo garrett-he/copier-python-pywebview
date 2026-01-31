@@ -1,0 +1,7 @@
+"""Bridge adapters for pywebview JS API."""
+
+from {{ project_package }}.bridges.app_bridge import AppBridge
+from {{ project_package }}.bridges.greeting_bridge import GreetingBridge
+from {{ project_package }}.bridges.js_api import JsApi
+
+__all__ = ['AppBridge', 'GreetingBridge', 'JsApi']

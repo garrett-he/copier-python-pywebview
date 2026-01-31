@@ -80,3 +80,37 @@ def test_pyproject_without_changelog(copie: Copie, base_answers: dict[str, str])
 
     content = (result.project_dir / 'pyproject.toml').read_text()
     assert 'urls.Changelog' not in content
+
+
+def test_pyproject_contains_pywebview_dependency(copie: Copie, base_answers: dict[str, str]) -> None:
+    """Test pyproject.toml includes pywebview dependency."""
+    result = copie.copy(extra_answers=base_answers)
+
+    assert result.exit_code == 0
+    assert result.project_dir is not None
+
+    content = (result.project_dir / 'pyproject.toml').read_text()
+    assert 'pywebview' in content
+
+
+def test_pyproject_contains_loguru_dependency(copie: Copie, base_answers: dict[str, str]) -> None:
+    """Test pyproject.toml includes loguru dependency."""
+    result = copie.copy(extra_answers=base_answers)
+
+    assert result.exit_code == 0
+    assert result.project_dir is not None
+
+    content = (result.project_dir / 'pyproject.toml').read_text()
+    assert 'loguru' in content
+
+
+def test_pyproject_contains_package_path(copie: Copie, base_answers: dict[str, str]) -> None:
+    """Test pyproject.toml contains correct package path."""
+    result = copie.copy(extra_answers=base_answers)
+
+    assert result.exit_code == 0
+    assert result.project_dir is not None
+
+    content = (result.project_dir / 'pyproject.toml').read_text()
+    package = base_answers['project_package']
+    assert f'src/{package}' in content

@@ -1,0 +1,41 @@
+"""Application entry point."""
+
+import os
+import sys
+from pathlib import Path
+
+import webview
+from loguru import logger
+
+from {{ project_package }}.bridges.js_api import JsApi
+from {{ project_package }}.core.logging import setup_logging
+
+
+def main() -> None:
+    """Launch the application."""
+    frozen = (
+        'NUITKA_ONEFILE_PARENT' in os.environ
+        or bool(getattr(sys, 'frozen', False))
+        or bool(getattr(sys, '__compiled__', False))
+    )
+    debug = not frozen
+    log_file = Path.home() / '.{{ project_name }}' / 'logs' / 'app.log'
+    setup_logging(debug, log_file)
+
+    url = 'http://localhost:5173' if debug else str(Path(__file__).parent / 'ui' / 'index.html')
+    logger.info('Application starting', debug)
+
+    try:
+        webview.create_window(
+            title=f'{{ project_name }}',
+            url=url,
+            js_api=JsApi(),
+        )
+        webview.start(debug=debug)
+    except Exception:
+        logger.exception('Unhandled exception')
+        raise
+
+
+if __name__ == '__main__':
+    main()

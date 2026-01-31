@@ -1,0 +1,32 @@
+"""Tests for the __main__ module."""
+
+from unittest.mock import patch
+
+from {{ project_package }}.__main__ import main
+
+
+def test_main_creates_window_dev_mode() -> None:
+    """Verify main uses dev server when not frozen."""
+    with patch('{{ project_package }}.__main__.webview') as mock_webview:
+        main()
+
+        mock_webview.create_window.assert_called_once()
+        kwargs = mock_webview.create_window.call_args[1]
+        assert kwargs['title'] == 'webview-example'
+        assert kwargs['url'] == 'http://localhost:5173'
+        assert mock_webview.start.call_args[1]['debug'] is True
+
+
+def test_main_creates_window_production_mode() -> None:
+    """Verify main uses local file when compiled (Nuitka)."""
+    with (
+        patch('{{ project_package }}.__main__.webview') as mock_webview,
+        patch('{{ project_package }}.__main__.sys', __compiled__=True),
+    ):
+        main()
+
+        mock_webview.create_window.assert_called_once()
+        kwargs = mock_webview.create_window.call_args[1]
+        assert kwargs['title'] == 'webview-example'
+        assert 'ui' in kwargs['url']
+        assert mock_webview.start.call_args[1]['debug'] is False

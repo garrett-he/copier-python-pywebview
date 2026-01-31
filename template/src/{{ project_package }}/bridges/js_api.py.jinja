@@ -1,0 +1,22 @@
+"""Single entry point for the pywebview JS API.
+
+Composes all bridge adapters into one object that pywebview exposes
+as ``window.pywebview.api`` in the frontend.
+"""
+
+from {{ project_package }}.bridges.app_bridge import AppBridge
+from {{ project_package }}.bridges.greeting_bridge import GreetingBridge
+
+
+class JsApi:
+    """Root API object exposed to the frontend via pywebview.
+
+    Nested bridge attributes are automatically exposed by pywebview,
+    so the frontend can call::
+
+        pywebview.api.app.getVersion()
+        pywebview.api.greeting.sayHello(name)
+    """
+
+    app = AppBridge()
+    greeting = GreetingBridge()

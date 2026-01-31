@@ -1,0 +1,15 @@
+"""Tests for the js_api module."""
+
+from {{ project_package }}.bridges.js_api import JsApi
+
+
+def test_js_api_has_app() -> None:
+    """Verify JsApi exposes app."""
+    api = JsApi()
+    assert api.app is not None
+
+
+def test_js_api_has_greeting() -> None:
+    """Verify JsApi exposes greeting."""
+    api = JsApi()
+    assert api.greeting is not None

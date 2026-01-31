@@ -10,9 +10,23 @@ if TYPE_CHECKING:
 STATIC_FILES = [
     '.editorconfig',
     '.gitattributes',
-    '.gitignore',
-    'justfile',
     '.pre-commit-config.yaml',
+]
+
+FRONTEND_STATIC_FILES = [
+    'frontend/biome.json',
+    'frontend/pnpm-workspace.yaml',
+    'frontend/src/App.vue',
+    'frontend/src/composables/useApi.ts',
+    'frontend/src/main.ts',
+    'frontend/src/router/index.ts',
+    'frontend/src/types/pywebview.d.ts',
+    'frontend/src/types/vite.d.ts',
+    'frontend/src/views/HomeView.vue',
+    'frontend/tests/App.test.ts',
+    'frontend/tests/HomeView.test.ts',
+    'frontend/tests/router.test.ts',
+    'frontend/tsconfig.json',
 ]
 
 
@@ -29,6 +43,19 @@ def test_static_files_generated(copie: Copie, base_answers: dict[str, str]) -> N
         assert filepath.exists(), f'Static file {filename} not found'
 
 
+def test_frontend_static_files_generated(copie: Copie, base_answers: dict[str, str]) -> None:
+    """Test that all frontend static files are generated."""
+    result = copie.copy(extra_answers=base_answers)
+
+    assert result.exit_code == 0
+    assert result.exception is None
+    assert result.project_dir is not None
+
+    for filename in FRONTEND_STATIC_FILES:
+        filepath = result.project_dir / filename
+        assert filepath.exists(), f'Frontend static file {filename} not found'
+
+
 def test_py_typed_marker_generated(copie: Copie, base_answers: dict[str, str]) -> None:
     """Test that py.typed marker file is generated."""
     result = copie.copy(extra_answers=base_answers)
@@ -39,3 +66,26 @@ def test_py_typed_marker_generated(copie: Copie, base_answers: dict[str, str]) -
     package = base_answers.get('project_package', 'test_project')
     py_typed = result.project_dir / 'src' / package / 'py.typed'
     assert py_typed.exists(), f'py.typed marker not found at {py_typed}'
+
+
+def test_backend_static_files_generated(copie: Copie, base_answers: dict[str, str]) -> None:
+    """Test that backend static Python files are generated."""
+    result = copie.copy(extra_answers=base_answers)
+
+    assert result.exit_code == 0
+    assert result.project_dir is not None
+
+    package = base_answers['project_package']
+
+    static_files = [
+        f'src/{package}/bridges/event_emitter.py',
+        f'src/{package}/core/__init__.py',
+        f'src/{package}/core/logging.py',
+        f'src/{package}/services/greeting_service.py',
+        'tests/bridges/__init__.py',
+        'tests/services/__init__.py',
+    ]
+
+    for filename in static_files:
+        filepath = result.project_dir / filename
+        assert filepath.exists(), f'Backend static file {filename} not found'

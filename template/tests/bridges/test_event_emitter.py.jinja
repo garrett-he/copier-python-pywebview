@@ -1,0 +1,39 @@
+"""Tests for the event_emitter module."""
+
+from unittest.mock import patch
+
+from {{ project_package }}.bridges.event_emitter import EventEmitter
+
+
+def test_emit_dispatches_custom_event() -> None:
+    """Verify EventEmitter.emit dispatches a CustomEvent via evaluate_js."""
+    with patch('{{ project_package }}.bridges.event_emitter.webview') as mock_webview:
+        EventEmitter.emit('greeting:hello', 'Hello, World')
+
+        mock_webview.windows[0].evaluate_js.assert_called_once()
+        js_code = mock_webview.windows[0].evaluate_js.call_args[0][0]
+        assert 'CustomEvent' in js_code
+        assert 'greeting:hello' in js_code
+        assert 'Hello, World' in js_code
+
+
+def test_emit_with_none_detail() -> None:
+    """Verify EventEmitter.emit works with None detail."""
+    with patch('{{ project_package }}.bridges.event_emitter.webview') as mock_webview:
+        EventEmitter.emit('some-event')
+
+        mock_webview.windows[0].evaluate_js.assert_called_once()
+        js_code = mock_webview.windows[0].evaluate_js.call_args[0][0]
+        assert 'some-event' in js_code
+        assert 'null' in js_code
+
+
+def test_emit_with_complex_detail() -> None:
+    """Verify EventEmitter.emit serializes complex data with json.dumps."""
+    with patch('{{ project_package }}.bridges.event_emitter.webview') as mock_webview:
+        detail = {'key': 'value', 'num': 42}
+        EventEmitter.emit('data-event', detail)
+
+        mock_webview.windows[0].evaluate_js.assert_called_once()
+        js_code = mock_webview.windows[0].evaluate_js.call_args[0][0]
+        assert '{"key": "value", "num": 42}' in js_code

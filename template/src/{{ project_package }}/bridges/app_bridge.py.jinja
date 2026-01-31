@@ -1,0 +1,15 @@
+"""Bridge adapter for application metadata."""
+
+from {{ project_package }}.services.app_service import AppService
+
+
+class AppBridge:
+    """Exposes application metadata to the frontend via pywebview JS API."""
+
+    def __init__(self) -> None:
+        """Initialize with an AppService instance."""
+        self._app_service = AppService()
+
+    def getVersion(self) -> str:
+        """Return the current application version."""
+        return self._app_service.get_version()

@@ -1,0 +1,76 @@
+# List all tasks
+@_default:
+    just --list --unsorted
+
+set windows-shell := ["powershell.exe", "-NoLogo", "-Command"]
+
+# Backend: Install development dependencies
+be-install:
+    uv sync --extra dev
+    uv run pre-commit install
+
+# Backend: Run linters
+be-lint:
+    uv run ruff check src tests
+    uv run ruff format --check src tests
+    uv run pyrefly check
+    uv run pyproject-fmt --check pyproject.toml
+    uv run rumdl check .
+
+# Backend: Run formatters
+be-format:
+    uv run ruff format src tests
+    uv run pyproject-fmt pyproject.toml
+    uv run rumdl check --fix .
+
+# Backend: Run tests
+be-test:
+    uv run pytest
+
+# Backend: Run in development mode
+be-dev:
+    uv run python -m {{ project_package }}
+
+# Frontend: Install development dependencies
+fe-install:
+    pnpm --dir frontend install
+
+# Frontend: Run linters
+fe-lint:
+    pnpm run --dir frontend check
+
+# Frontend: Run formatters
+fe-format:
+    pnpm run --dir frontend format
+
+# Frontend: Run tests
+fe-test:
+    pnpm run --dir frontend test
+
+# Frontend: Build project
+fe-build:
+    pnpm run --dir frontend build
+
+# Frontend: Run in development mode
+fe-dev:
+    pnpm run --dir frontend dev
+
+# Install all dependencies
+install:
+    just be-install
+    just fe-install
+
+# Run all linters
+lint:
+    just be-lint
+    just fe-lint
+
+# Run all formatters
+format:
+    just be-format
+    just fe-format
+
+# Run all tests
+test:
+    just be-test
+    just fe-test

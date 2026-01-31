@@ -1,0 +1,23 @@
+"""Tests for the app_bridge module."""
+
+from unittest.mock import patch
+
+from {{ project_package }}.bridges.app_bridge import AppBridge
+
+
+def test_app_bridge_get_version_returns_string() -> None:
+    """Verify AppBridge.getVersion returns a string."""
+    bridge = AppBridge()
+    result = bridge.getVersion()
+    assert isinstance(result, str)
+    assert len(result) > 0
+
+
+def test_app_bridge_get_version_delegates_to_service() -> None:
+    """Verify AppBridge.getVersion delegates to AppService."""
+    bridge = AppBridge()
+    with patch.object(bridge, '_service') as mock_svc:
+        mock_svc.get_version.return_value = '2.0.0'
+        result = bridge.getVersion()
+        assert result == '2.0.0'
+        mock_svc.get_version.assert_called_once()

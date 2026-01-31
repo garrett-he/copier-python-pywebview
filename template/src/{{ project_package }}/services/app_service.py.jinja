@@ -1,0 +1,11 @@
+"""Application metadata service."""
+
+from {{ project_package }} import __version__
+
+
+class AppService:
+    """Provides application-level metadata."""
+
+    def get_version(self) -> str:
+        """Return the current application version."""
+        return __version__

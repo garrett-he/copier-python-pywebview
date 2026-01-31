@@ -1,0 +1,21 @@
+"""Bridge adapter for greeting functionality."""
+
+from {{ project_package }}.bridges.event_emitter import EventEmitter
+from {{ project_package }}.services.greeting_service import GreetingService
+
+
+class GreetingBridge:
+    """Exposes greeting functionality to the frontend via pywebview JS API."""
+
+    def __init__(self) -> None:
+        """Initialize with a GreetingService instance."""
+        self._greeting_service = GreetingService()
+
+    def sayHello(self, name: str) -> None:
+        """Send a greeting message to the frontend via a custom event.
+
+        Args:
+            name: The name to include in the greeting.
+        """
+        message = self._greeting_service.greet(name)
+        EventEmitter.emit('greeting:hello', message)

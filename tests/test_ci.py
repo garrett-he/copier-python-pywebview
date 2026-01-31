@@ -43,6 +43,8 @@ def test_ci_workflow_contains_required_tools(copie: Copie, base_answers: dict[st
     assert 'actions/checkout@v4' in content
     assert 'extractions/setup-just@v4' in content
     assert 'astral-sh/setup-uv@v5' in content
+    assert 'pnpm/action-setup@v4' in content
+    assert 'actions/setup-node@v4' in content
 
 
 def test_ci_workflow_contains_commands(copie: Copie, base_answers: dict[str, str]) -> None:
@@ -53,8 +55,8 @@ def test_ci_workflow_contains_commands(copie: Copie, base_answers: dict[str, str
     assert result.project_dir is not None
 
     content = (result.project_dir / '.github' / 'workflows' / 'ci.yml').read_text()
-    assert 'just install-dev' in content
-    assert 'just check' in content
+    assert 'just install' in content
+    assert 'just lint' in content
     assert 'just test' in content
 
 
@@ -83,3 +85,28 @@ def test_ci_workflow_python_matrix_custom(copie: Copie, base_answers: dict[str, 
     assert '"3.13"' in content
     assert '"3.14"' in content
     assert '"3.12"' not in content
+
+
+def test_ci_workflow_contains_frontend_tools(copie: Copie, base_answers: dict[str, str]) -> None:
+    """Test that CI workflow sets up frontend tools (pnpm, node)."""
+    result = copie.copy(extra_answers=base_answers)
+
+    assert result.exit_code == 0
+    assert result.project_dir is not None
+
+    content = (result.project_dir / '.github' / 'workflows' / 'ci.yml').read_text()
+    assert 'pnpm' in content
+    assert 'node-version' in content
+    assert 'frontend/pnpm-lock.yaml' in content
+
+
+def test_ci_workflow_contains_qt_offscreen(copie: Copie, base_answers: dict[str, str]) -> None:
+    """Test that CI workflow sets QT_QPA_PLATFORM for headless testing."""
+    result = copie.copy(extra_answers=base_answers)
+
+    assert result.exit_code == 0
+    assert result.project_dir is not None
+
+    content = (result.project_dir / '.github' / 'workflows' / 'ci.yml').read_text()
+    assert 'QT_QPA_PLATFORM' in content
+    assert 'offscreen' in content

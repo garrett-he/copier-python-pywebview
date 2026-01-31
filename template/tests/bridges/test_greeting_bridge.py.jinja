@@ -1,0 +1,28 @@
+"""Tests for the greeting_bridge module."""
+
+from unittest.mock import patch
+
+from {{ project_package }}.bridges.greeting_bridge import GreetingBridge
+
+
+def test_greeting_bridge_say_hello_emits_event() -> None:
+    """Verify GreetingBridge.sayHello emits pywebview-hello via EventEmitter."""
+    bridge = GreetingBridge()
+    with patch('{{ project_package }}.bridges.greeting_bridge.EventEmitter') as mock_emitter:
+        bridge.sayHello('World')
+
+        mock_emitter.emit.assert_called_once_with('greeting:hello', 'Hello, World')
+
+
+def test_greeting_bridge_say_hello_delegates_to_service() -> None:
+    """Verify GreetingBridge.sayHello delegates to GreetingService."""
+    bridge = GreetingBridge()
+    with (
+        patch('{{ project_package }}.bridges.greeting_bridge.EventEmitter') as mock_emitter,
+        patch.object(bridge, '_service') as mock_svc,
+    ):
+        mock_svc.greet.return_value = 'Hello, Alice'
+        bridge.sayHello('Alice')
+
+        mock_svc.greet.assert_called_once_with('Alice')
+        mock_emitter.emit.assert_called_once_with('greeting:hello', 'Hello, Alice')

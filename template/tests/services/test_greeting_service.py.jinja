@@ -1,0 +1,10 @@
+"""Tests for the greeting_service module."""
+
+from {{ project_package }}.services.greeting_service import GreetingService
+
+
+def test_greeting_service_greet() -> None:
+    """Verify GreetingService.greet returns the expected message."""
+    service = GreetingService()
+    assert service.greet('World') == 'Hello, World'
+    assert service.greet('Alice') == 'Hello, Alice'

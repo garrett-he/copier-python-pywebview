@@ -1,0 +1,22 @@
+import { resolve } from "path";
+import { defineConfig } from "vite";
+import vue from "@vitejs/plugin-vue";
+import type { UserConfig } from "vitest";
+
+export default defineConfig({
+    plugins: [vue()],
+    base: "./",
+    resolve: {
+        alias: {
+            "@": resolve(__dirname, "src"),
+        },
+    },
+    test: {
+        environment: "jsdom",
+        include: ["tests/**/*.test.ts"],
+    } satisfies UserConfig["test"],
+    build: {
+        outDir: "../src/{{ project_package }}/ui",
+        emptyOutDir: true,
+    },
+});
