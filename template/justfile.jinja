@@ -74,3 +74,33 @@ format:
 test:
     just be-test
     just fe-test
+
+# Package project
+dist: fe-build
+    just _dist-{{ os() }}
+
+_dist-macos:
+    uv run nuitka \
+        --output-dir=dist \
+        --output-filename={{ project_name }} \
+        --output-folder-name={{ project_name }} \
+        --include-data-dir=src/{{ project_package }}/ui=ui \
+        --assume-yes-for-downloads \
+        --macos-create-app-bundle \
+        --macos-app-icon=resources/icons/app.icns \
+        src/{{ project_package }}
+
+_dist-windows:
+    uv run nuitka \
+        --onefile \
+        --output-dir=dist \
+        --output-filename={{ project_name }} \
+        --include-data-dir=src/{{ project_package }}/ui=ui \
+        --include-module=webview.platforms.edgechromium \
+        --include-module=webview.platforms.win32 \
+        --no-deployment-flag=excluded-module-usage \
+        --disable-plugin=pywebview \
+        --assume-yes-for-downloads \
+        --windows-console-mode=disable \
+        --windows-icon-from-ico=resources/icons/app.ico \
+        src/{{ project_package }}
