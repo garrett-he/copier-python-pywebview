@@ -1,7 +1,7 @@
 """Logging configuration."""
 
 import sys
-from pathlib import Path  # noqa: TC003
+from pathlib import Path
 
 from loguru import logger
 

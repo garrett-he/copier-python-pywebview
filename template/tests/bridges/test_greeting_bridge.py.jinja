@@ -19,7 +19,7 @@ def test_greeting_bridge_say_hello_delegates_to_service() -> None:
     bridge = GreetingBridge()
     with (
         patch('{{ project_package }}.bridges.greeting_bridge.EventEmitter') as mock_emitter,
-        patch.object(bridge, '_service') as mock_svc,
+        patch.object(bridge, '_greeting_service') as mock_svc,
     ):
         mock_svc.greet.return_value = 'Hello, Alice'
         bridge.sayHello('Alice')

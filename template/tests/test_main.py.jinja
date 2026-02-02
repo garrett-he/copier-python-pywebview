@@ -12,7 +12,7 @@ def test_main_creates_window_dev_mode() -> None:
 
         mock_webview.create_window.assert_called_once()
         kwargs = mock_webview.create_window.call_args[1]
-        assert kwargs['title'] == 'webview-example'
+        assert kwargs['title'] == '{{ project_name }}'
         assert kwargs['url'] == 'http://localhost:5173'
         assert mock_webview.start.call_args[1]['debug'] is True
 
@@ -27,6 +27,6 @@ def test_main_creates_window_production_mode() -> None:
 
         mock_webview.create_window.assert_called_once()
         kwargs = mock_webview.create_window.call_args[1]
-        assert kwargs['title'] == 'webview-example'
+        assert kwargs['title'] == '{{ project_name }}'
         assert 'ui' in kwargs['url']
         assert mock_webview.start.call_args[1]['debug'] is False

@@ -25,6 +25,7 @@ dependencies = [
     "pywebview>=6.2.1",
 ]
 optional-dependencies.dev = [
+    "nuitka>=4.1.2",
     "pre-commit>=4.6.0",
     "pyproject-fmt>=2.24.0",
     "pyrefly>=1.0.0",
@@ -32,6 +33,7 @@ optional-dependencies.dev = [
     "pytest-cov>=7.1.0",
     "ruff>=0.15.17",
     "rumdl>=0.2.16",
+    "zstandard>=0.25.0",
 ]
 {% if with_changelog %}
 urls.Changelog = "https://github.com/{{ vcs_github_path }}/blob/main/CHANGELOG.md"
@@ -51,6 +53,7 @@ format.indent-style = "space"
 format.quote-style = "single"
 format.line-ending = "lf"
 lint.select = [ "A", "B", "C4", "D", "E", "F", "I", "N", "RUF", "SIM", "TCH", "UP", "W" ]
+lint.per-file-ignores."src/{{ project_package }}/bridges/*.py" = [ "N802" ]
 lint.pydocstyle.convention = "google"
 
 [tool.pyproject-fmt]

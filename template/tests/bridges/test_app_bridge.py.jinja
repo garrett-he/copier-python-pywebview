@@ -16,7 +16,7 @@ def test_app_bridge_get_version_returns_string() -> None:
 def test_app_bridge_get_version_delegates_to_service() -> None:
     """Verify AppBridge.getVersion delegates to AppService."""
     bridge = AppBridge()
-    with patch.object(bridge, '_service') as mock_svc:
+    with patch.object(bridge, '_app_service') as mock_svc:
         mock_svc.get_version.return_value = '2.0.0'
         result = bridge.getVersion()
         assert result == '2.0.0'

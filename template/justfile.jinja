@@ -77,7 +77,7 @@ test:
 
 # Package project
 dist: fe-build
-    just _dist-{{ os() }}
+    {% raw %}just _dist-{{ os() }}{% endraw %}
 
 _dist-macos:
     uv run nuitka \
