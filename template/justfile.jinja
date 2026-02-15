@@ -9,8 +9,8 @@ be-install:
     uv sync --extra dev
     uv run pre-commit install
 
-# Backend: Run linters
-be-lint:
+# Backend: Run checkers
+be-check:
     uv run ruff check src tests
     uv run ruff format --check src tests
     uv run pyrefly check
@@ -35,8 +35,8 @@ be-dev:
 fe-install:
     pnpm --dir frontend install
 
-# Frontend: Run linters
-fe-lint:
+# Frontend: Run checkers
+fe-check:
     pnpm run --dir frontend check
 
 # Frontend: Run formatters
@@ -60,10 +60,10 @@ install:
     just be-install
     just fe-install
 
-# Run all linters
-lint:
-    just be-lint
-    just fe-lint
+# Run all checkers
+check:
+    just be-check
+    just fe-check
 
 # Run all formatters
 format:

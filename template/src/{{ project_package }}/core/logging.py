@@ -1,10 +1,12 @@
 """Logging configuration."""
 
 import sys
-from pathlib import Path
+from typing import TYPE_CHECKING
 
 from loguru import logger
 
+if TYPE_CHECKING:
+    from pathlib import Path
 
 def setup_logging(debug: bool, log_file: Path) -> None:
     """Configure loguru based on runtime mode.

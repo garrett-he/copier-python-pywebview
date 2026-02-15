@@ -10,6 +10,36 @@ from loguru import logger
 from {{ project_package }}.bridges.js_api import JsApi
 from {{ project_package }}.core.logging import setup_logging
 
+_REF_WIDTH = 2200
+_REF_HEIGHT = 1400
+_REF_SCREEN = 3840
+_MIN_RATIO = 0.8
+
+def _compute_window_size() -> tuple[int, int, int, int]:
+    """Scale window size based on primary screen width.
+
+    Returns:
+        (width, height, min_width, min_height).
+    """
+    screen = next(
+        (s for s in webview.screens if s.x == 0 and s.y == 0),
+        webview.screens[0] if webview.screens else None,
+    )
+
+    if screen is None:
+        return (
+            _REF_WIDTH,
+            _REF_HEIGHT,
+            round(_REF_WIDTH * _MIN_RATIO),
+            round(_REF_HEIGHT * _MIN_RATIO),
+        )
+
+    scale = screen.width / _REF_SCREEN
+    width = round(_REF_WIDTH * scale)
+    height = round(_REF_HEIGHT * scale)
+
+    return width, height, round(width * _MIN_RATIO), round(height * _MIN_RATIO)
+
 
 def main() -> None:
     """Launch the application."""
@@ -25,9 +55,14 @@ def main() -> None:
     url = 'http://localhost:5173' if debug else str(Path(__file__).parent / 'ui' / 'index.html')
     logger.info('Application starting', debug)
 
+    width, height, min_width, min_height = _compute_window_size()
+
     try:
         webview.create_window(
             title='{{ project_name }}',
+            width=width,
+            height=height,
+            min_size=(min_width, min_height),
             url=url,
             js_api=JsApi(),
         )
